@@ -1,0 +1,26 @@
+<div class="hero-head">
+  <nav class="navbar">
+      <div class="container">
+          <div class="navbar-brand">
+              <a class="navbar-item" href="/">
+                  <img src="../../static/img/Spectrum-white.png" alt="Logo">
+              </a>
+              <span class="navbar-burger burger" data-target="navbarMenuHeroB">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+              </span>
+          </div>
+          <div id="navbarMenuHeroB" class="navbar-menu">
+              <div class="navbar-end">
+                  <a {% set item_class = "navbar-item is-active" if active_page=="home" else "navbar-item"%} class="{{item_class}}"  href="/">
+                      Home
+                  </a>
+                  <a {% set item_class = "navbar-item is-active" if active_page=="about" else "navbar-item"%} class="{{item_class}}" href="/about">
+                      About
+                  </a>
+              </div>
+          </div>
+      </div>
+  </nav>
+</div>
