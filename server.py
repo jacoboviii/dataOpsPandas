@@ -1,18 +1,18 @@
-import os, sys
-from flask import Flask, url_for, render_template
-from data import Articles
-import webview
+from flask import Flask, render_template, flash, redirect, url_for, request, jsonify, send_file
+from app import pdProcess, pdDownload
+from wtforms import StringField, TextAreaField, PasswordField, validators
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 server = Flask(__name__)
+server.secret_key = 'secretkey123'
 server.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1  # disable caching
+dataFrame = None
 
 @server.after_request
 def add_header(response):
     response.headers['Cache-Control'] = 'no-store'
     return response
-
-# Import temporary data
-Articles = Articles()
 
 @server.route('/')
 def index():
@@ -22,9 +22,33 @@ def index():
 def about():
     return render_template('about.html')
 
+class UploadForm(FlaskForm):
+    upload = FileField('', validators=[
+        FileRequired(),
+        FileAllowed(['csv', 'xls', 'xlsx'], 'Please select a valid excel file.')
+    ])
 @server.route('/upload')
 def upload():
-    return render_template('upload.html')
+    form = UploadForm()
+    return render_template('upload.html', form=form)
+
+@server.route('/process', methods=['POST'])
+def process():
+    form = UploadForm()   
+    if request.method == 'POST' and form.validate_on_submit():
+        inputfile = form.upload.data
+
+        # Display results from the pdProcess function to the page
+        global dataFrame 
+        dataFrame = pdProcess(inputfile)
+        return jsonify(data={'message': 'success!'})
+    return jsonify(errors=form.errors)
+
+@server.route('/download')
+def download():
+    # Display results from the pdProcess function to the page
+    output = pdDownload(dataFrame)
+    return send_file(output, attachment_filename='testing.xlsx', as_attachment=True)
 
 def run_server():
     server.run(host="127.0.0.1", port=5100, threaded=True)

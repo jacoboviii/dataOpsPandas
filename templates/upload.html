@@ -1,14 +1,16 @@
-{% extends 'layout.html' %} {% set active_page = "upload" %} {% block body %}
-<div class="hero-body">
-    <div class="container has-text-centered box">
-        <p class="title has-text-black">
-            Process Spreadsheet...
-        </p>
+{% extends 'layout.html' %} 
+{% set active_page = "upload" %} 
+{% block body %}
+<div class="container has-text-centered box">
+    <p class="title has-text-black">
+        Process Spreadsheet...
+    </p>
+    <form id="form-process">
         <div class="columns">
             <div class="column">
                 <div class="file has-name is-primary">
                     <label class="file-label">
-                        <input id="file-upload" class="file-input" type="file" name="resume">
+                        {{ form.csrf_token }} {{ form.upload(class="file-input", id="file-upload", type="file") }}
                         <span class="file-cta">
                             <span class="file-icon">
                                 <i class="fas fa-upload"></i>
@@ -24,19 +26,19 @@
                 </div>
             </div>
             <div class="column">
-                <a class="button-process button is-info">
+                <button type="submit" class="button-process button is-info">
                     <span class="icon">
                         <i class="fas fa-play"></i>
                     </span>
                     <span>Process</span>
-                </a>
+                </button>
                 <a class="button-loading button is-info is-loading">
                     <span class="icon">
                         <i class="fas fa-play"></i>
                     </span>
                     <span>Process</span>
                 </a>
-                <a class="button-download button is-success">
+                <a href="/download" class="button-download button is-success">
                     <span class="icon">
                         <i class="fas fa-file-download"></i>
                     </span>
@@ -44,7 +46,6 @@
                 </a>
             </div>
         </div>
-
-    </div>
+    </form>
 </div>
 {% endblock %}
