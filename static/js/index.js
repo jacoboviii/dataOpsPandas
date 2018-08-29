@@ -49,7 +49,7 @@ function fileProcess(e) {
                 // Clear notifications first
                 clearNotification();
                 // On error display the a notification
-                const error = data.errors.upload[0];
+                const error = data.errors.upload ? data.errors.upload[0] : data.errors.file;
                 createNotification(error, 'danger');
                 defaultButtonDisplay();
             } else {
@@ -57,6 +57,10 @@ function fileProcess(e) {
                 setTimeout(function () {
                     btnLoading.style.display = 'none';
                     btndownload.style.display = 'inline-flex';
+                    
+                    // Send message to client
+                    const msg = data.data.success
+                    createNotification(msg, 'success');
                 }, 1000);
             }
         }
@@ -84,8 +88,9 @@ function defaultButtonDisplay() {
 
 // Clear notification
 function clearNotification() {
-    document.querySelectorAll('.notification').forEach(function(element){
-        element.remove()
+    const notification = document.querySelectorAll('.notification');
+    Array.prototype.forEach.call(notification, function(element){
+        heroBody.removeChild(element);
     });
 };
 

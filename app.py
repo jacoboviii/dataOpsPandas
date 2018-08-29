@@ -6,25 +6,26 @@ from io import BytesIO
 
 def pdProcess(filename):
     # Importing Excel Sheet
-    excel = pd.read_excel(filename, sheet_name='Texas')
-    excel.head()
+    df = pd.read_excel(filename, sheet_name='Texas')
 
-    # List all the columns in the spreadsheet
-    list(excel)
-
-    # Applying a filter
-    dataFrameOut = excel[(excel.LOB == 'MULTI DWELLING UNIT MDU BUILD') | (excel.LOB == 'RESIDENTIAL BUILD')]
-    # Grab only the series listed
-    dataFrameOut = dataFrameOut[['ISSUES', 'JOB_NAME', 'EXTERNAL_ID', 'REQUEST_NAME']]
-    dataFrameOut.head()
-    return dataFrameOut
+    # Select records by
+    dfFiltered = df[(df.LOB == 'MULTI DWELLING UNIT MDU BUILD') | (df.LOB == 'RESIDENTIAL BUILD')]
+    # Grab these columns
+    dfFiltered = dfFiltered[['ISSUES', 'JOB_NAME', 'EXTERNAL_ID', 'REQUEST_NAME', 'LOB']]
+    # Group by LOB
+    dfGroup = dfFiltered.groupby('LOB')
+    return dfGroup
     
-def pdDownload(dataFrame):
+def pdDownload(dataObject):
     #create an output stream
     fileOutput = io.BytesIO()
     writer = pd.ExcelWriter(fileOutput)
-    dataFrame.to_excel(writer,'Sheet1')
-    dataFrame.to_excel(writer,'Sheet2')
+
+    # Loop through all the groups in the group object and create a new sheet for each group
+    for gName, gDataFrame in dataObject:
+        print(gName)
+        gDataFrame.to_excel(writer,gName)
+    
     writer.save()
     fileOutput.seek(0)
     return fileOutput

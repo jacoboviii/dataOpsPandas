@@ -3,11 +3,13 @@ from app import pdProcess, pdDownload
 from wtforms import StringField, TextAreaField, PasswordField, validators
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
+import traceback
+import logging
 
 server = Flask(__name__)
 server.secret_key = 'secretkey123'
 server.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1  # disable caching
-dataFrame = None
+pdGroupObject = None
 
 @server.after_request
 def add_header(response):
@@ -25,8 +27,9 @@ def about():
 class UploadForm(FlaskForm):
     upload = FileField('', validators=[
         FileRequired(),
-        FileAllowed(['csv', 'xls', 'xlsx'], 'Please select a valid excel file.')
+        FileAllowed(['csv', 'xls', 'xlsx'], 'Please select an excel file.')
     ])
+
 @server.route('/upload')
 def upload():
     form = UploadForm()
@@ -38,21 +41,28 @@ def process():
     if request.method == 'POST' and form.validate_on_submit():
         inputfile = form.upload.data
 
-        # Display results from the pdProcess function to the page
-        global dataFrame 
-        dataFrame = pdProcess(inputfile)
-        return jsonify(data={'message': 'success!'})
+        try:
+            # Assign global value
+            global pdGroupObject
+            pdGroupObject = pdProcess(inputfile)
+        except Exception as e:
+            # Logs the error appropriately and send error message to client
+            logging.error(traceback.format_exc())
+            return jsonify(errors={'file':'Please select the correct excel file.'})
+        # Send success message if OK
+        return jsonify(data={'success': 'File successfully processed!'})
+    # Send form errors to client
     return jsonify(errors=form.errors)
 
 @server.route('/download')
 def download():
     # Display results from the pdProcess function to the page
-    output = pdDownload(dataFrame)
+    output = pdDownload(pdGroupObject)
     return send_file(output, attachment_filename='testing.xlsx', as_attachment=True)
 
 def run_server():
-    server.run(host="127.0.0.1", port=5100, threaded=True)
-    # server.run(debug=True)
+    # server.run(host="127.0.0.1", port=5100, threaded=True)
+    server.run(debug=True)
 
 if __name__ == "__main__":
     run_server()
