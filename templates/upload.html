@@ -10,7 +10,8 @@
             <div class="column">
                 <div class="file has-name is-primary">
                     <label class="file-label">
-                        {{ form.csrf_token }} {{ form.upload(class="file-input", id="file-upload", type="file") }}
+                        {{ form.upload(class="file-input", id="file-upload", type="file") }}
+                        {{ form.csrf_token }} 
                         <span class="file-cta">
                             <span class="file-icon">
                                 <i class="fas fa-upload"></i>
@@ -30,19 +31,19 @@
                     <span class="icon">
                         <i class="fas fa-play"></i>
                     </span>
-                    <span>Process</span>
+                    <span>Process file</span>
                 </button>
                 <a class="button-loading button is-info is-loading">
                     <span class="icon">
                         <i class="fas fa-play"></i>
                     </span>
-                    <span>Process</span>
+                    <span>Process file</span>
                 </a>
                 <a href="/download" class="button-download button is-success">
                     <span class="icon">
                         <i class="fas fa-file-download"></i>
                     </span>
-                    <span>Download</span>
+                    <span>Download file</span>
                 </a>
             </div>
         </div>

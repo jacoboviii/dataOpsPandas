@@ -1,15 +1,16 @@
 from flask import Flask, render_template, flash, redirect, url_for, request, jsonify, send_file
-from app import pdProcess, pdDownload
+from app import pdProcess
 from wtforms import StringField, TextAreaField, PasswordField, validators
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 import traceback
 import logging
+import datetime
 
 server = Flask(__name__)
 server.secret_key = 'secretkey123'
 server.config["SEND_FILE_MAX_AGE_DEFAULT"] = 1  # disable caching
-pdGroupObject = None
+pdFileOut = None
 
 @server.after_request
 def add_header(response):
@@ -43,8 +44,8 @@ def process():
 
         try:
             # Assign global value
-            global pdGroupObject
-            pdGroupObject = pdProcess(inputfile)
+            global pdFileOut
+            pdFileOut = pdProcess(inputfile)
         except Exception as e:
             # Logs the error appropriately and send error message to client
             logging.error(traceback.format_exc())
@@ -57,8 +58,9 @@ def process():
 @server.route('/download')
 def download():
     # Display results from the pdProcess function to the page
-    output = pdDownload(pdGroupObject)
-    return send_file(output, attachment_filename='testing.xlsx', as_attachment=True)
+    timeStamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    fileNameOut = 'Processed_Sheet_' + timeStamp + '.xlsx'
+    return send_file(pdFileOut, attachment_filename=fileNameOut, as_attachment=True)
 
 def run_server():
     # server.run(host="127.0.0.1", port=5100, threaded=True)

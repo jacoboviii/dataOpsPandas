@@ -10,7 +10,7 @@
 })();
 
 // query Selectors
-const heroBody = document.querySelector('.hero-body');
+const messagesCont = document.querySelector('.messages');
 const formProcess = document.querySelector('#form-process');
 const btnProcess = document.querySelector('.button-process');
 const btnLoading = document.querySelector('.button-loading');
@@ -57,11 +57,11 @@ function fileProcess(e) {
                 setTimeout(function () {
                     btnLoading.style.display = 'none';
                     btndownload.style.display = 'inline-flex';
-                    
+
                     // Send message to client
                     const msg = data.data.success
                     createNotification(msg, 'success');
-                }, 1000);
+                }, 250);
             }
         }
     });
@@ -76,6 +76,7 @@ btndownload.addEventListener('click', fileDownload)
 function fileDownload(e) {
     // e.preventDefault();
     console.log('downloading!');
+    clearNotification();
     defaultButtonDisplay();
 };
 
@@ -90,7 +91,7 @@ function defaultButtonDisplay() {
 function clearNotification() {
     const notification = document.querySelectorAll('.notification');
     Array.prototype.forEach.call(notification, function(element){
-        heroBody.removeChild(element);
+        messagesCont.removeChild(element);
     });
 };
 
@@ -100,13 +101,13 @@ function createNotification(message, className) {
     messagesDiv.textContent = message;
     switch (className) {
         case 'danger':
-            messagesDiv.className = 'container notification is-danger';
+            messagesDiv.className = 'notification is-danger';
             break;
         case 'success':
-            messagesDiv.className = 'container notification is-success';
+            messagesDiv.className = 'notification is-success';
             break;
         default:
-            messagesDiv.className = 'container notification is-primary';
+            messagesDiv.className = 'notification is-primary';
     }
-    heroBody.insertBefore(messagesDiv, heroBody.firstChild);
+    messagesCont.insertBefore(messagesDiv, messagesCont.firstChild);
 };

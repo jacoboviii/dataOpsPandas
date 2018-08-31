@@ -2,11 +2,12 @@
     display: none;
   }
 
+  .messages {
+    height: 80px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .hero {
     height: 100vh;
   }
-
-  /* .box {
-    height: 100%;
-    vertical-align: middle;
-  } */
